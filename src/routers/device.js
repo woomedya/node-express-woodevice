@@ -1,6 +1,6 @@
 const returnModel = require('woo-utilities/returnModel');
 const AsyncRouter = require('express-async-router').AsyncRouter;
-const authToken = require('../handlers/authToken');
+const authToken = require('woo-utilities/authTokenHandler');
 const token = require('../constants/token');
 const deviceRepo = require('../repositories/device');
 const config = require('../../config');
@@ -8,7 +8,7 @@ const dateValidate = require('woo-utilities/date').dateValidate;
 
 const router = AsyncRouter();
 
-router.post('/insert', authToken(token.DEVICE_INSERT), async (req, res) => {
+router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) => {
     // req.body.device, req.body.keys, req.body.os
     var device = await deviceRepo.findByDevice(req.body.device);
 
@@ -57,7 +57,7 @@ router.post('/insert', authToken(token.DEVICE_INSERT), async (req, res) => {
     }));
 });
 
-router.post('/keyinfo', authToken(token.DEVICE_KEY), async (req, res) => {
+router.post('/keyinfo', authToken.handler(token.DEVICE_KEY), async (req, res) => {
     var keyInfo = config.keyInfoFunc ? await config.keyInfoFunc(req.body.os) : {};
 
     res.send(returnModel({
