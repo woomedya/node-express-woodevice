@@ -1,7 +1,4 @@
 const config = require('./config');
-const deviceRouter = require('./src/routers/device');
-const deviceRepo = require('./src/repositories/device');
-const deviceModel = require('./src/repositories/models/device');
 const authTokenHandler = require('woo-utilities/authTokenHandler');
 
 const init = ({
@@ -21,12 +18,12 @@ const init = ({
 module.exports = {
     init,
     router: {
-        device: deviceRouter
+        device: () => require('./src/routers/device')
     },
     repository: {
-        device: deviceRepo
+        device: () => require('./src/repositories/device')
     },
     model: {
-        device: deviceModel
+        device: () => require('./src/repositories/models/device')
     }
 }
