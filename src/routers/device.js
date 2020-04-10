@@ -23,9 +23,9 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
         var purchase = (device.purchase || []).map(x => x);
 
         if (req.body.purchase && req.body.purchase.length) {
-            req.body.purchase.forEach(item => {
-                var keyInfo = config.keyInfoFunc ? await config.keyInfoFunc(req.body.os) : {};
+            var keyInfo = config.keyInfoFunc ? await config.keyInfoFunc(req.body.os) : {};
 
+            req.body.purchase.forEach(item => {
                 var lastPurchase = purchase
                     .filter(x => x.key == item.key)
                     .sort((x, y) => x.date > y.date ? -1 : 1)[0];
