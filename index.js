@@ -5,12 +5,13 @@ const deviceModel = require('./src/repositories/models/device');
 const authTokenHandler = require('woo-utilities/authTokenHandler');
 
 const init = ({
-    publicKey, privateKey, mongoose, iysContentFunc = null
+    publicKey, privateKey, mongoose, iysContentFunc = null, keyInfoFunc = null
 }) => {
     config.publicKey = publicKey;
     config.privateKey = privateKey;
     config.mongoose = mongoose;
     config.iysContentFunc = iysContentFunc;
+    config.keyInfoFunc = keyInfoFunc;
 
     authTokenHandler.init({
         publicKey, privateKey
