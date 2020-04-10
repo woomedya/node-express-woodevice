@@ -18,10 +18,10 @@ const update = async (device, data) => {
     var updatedData = { date: new Date() };
 
     if (data.iysContent)
-        updatedData.iysContent = iysContent;
+        updatedData.iysContent = data.iysContent;
 
     if (data.purchase)
-        updatedData.purchase = purchase;
+        updatedData.purchase = data.purchase;
 
     return await deviceModel.updateOne({
         device
