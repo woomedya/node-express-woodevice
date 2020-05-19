@@ -22,9 +22,9 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
     if (device) {
         var purchase = (device.purchase || []).map(x => x);
 
-        if (req.body.purchase && req.body.purchase.length) {
-            var keyInfo = config.keyInfoFunc ? await config.keyInfoFunc(req.body.os) : {};
+        var keyInfo = config.keyInfoFunc ? await config.keyInfoFunc(req.body.os) : {};
 
+        if (req.body.purchase && req.body.purchase.length) {
             req.body.purchase.forEach(item => {
                 var lastPurchase = purchase
                     .filter(x => x.key == item.key)
@@ -42,7 +42,7 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
         }
 
         iysContent = config.iysContentFunc ? await config.iysContentFunc(req.body.os, purchase
-            .filter(x => dateValidate(x.date, keyInfo[x.key].subscriptionPeriod))) : null;
+            .filter(x => keyInfo[x.key] && dateValidate(x.date, keyInfo[x.key].subscriptionPeriod))) : null;
 
         deviceRepo.update(req.body.device, {
             iysContent,
