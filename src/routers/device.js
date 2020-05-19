@@ -41,6 +41,9 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
             });
         }
 
+        iysContent = config.iysContentFunc ? await config.iysContentFunc(req.body.os, purchase
+            .filter(x => dateValidate(x.date, keyInfo[x.key].subscriptionPeriod))) : null;
+
         deviceRepo.update(req.body.device, {
             iysContent,
             purchase
