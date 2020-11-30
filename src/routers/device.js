@@ -59,7 +59,7 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
             purchase
         });
     } else {
-        deviceRepo.insert(req.body.device, {
+        await deviceRepo.insert(req.body.device, {
             os: req.body.os,
             iysContent
         });
