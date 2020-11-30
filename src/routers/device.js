@@ -8,7 +8,17 @@ const dateValidate = require('woo-utilities/date').dateValidate;
 
 const router = AsyncRouter();
 
+var processDevices = {};
+
 router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) => {
+    if (processDevices[req.body.device]) {
+        return res.send(returnModel({
+            data: null
+        }));
+    } else {
+        processDevices[req.body.device] = true;
+    }
+
     // req.body.device, req.body.keys, req.body.os
     var device = await deviceRepo.findByDevice(req.body.device);
 
@@ -55,6 +65,7 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
         });
     }
 
+    delete processDevices[req.body.device];
     res.send(returnModel({
         data: iysContent
     }));
