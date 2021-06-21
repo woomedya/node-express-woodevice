@@ -22,7 +22,7 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
     // req.body.device, req.body.keys, req.body.os
     var device = await deviceRepo.findByDevice(req.body.device);
 
-    var iysContent = config.iysContentFunc ? await config.iysContentFunc(req.body.os, req.body.purchase) : null;
+    var iysContent = config.iysContentFunc ? await config.iysContentFunc(req.body.os, req.body.purchase, req.body) : null;
 
     // bazı işletim sistemlerinden os gelmemesi durumu için kullanılır.
     if (!req.body.os && (device ? device.os == null : true)) {
@@ -51,8 +51,12 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
             });
         }
 
-        iysContent = config.iysContentFunc ? await config.iysContentFunc(req.body.os, purchase
-            .filter(x => keyInfo[x.key] && dateValidate(x.date, keyInfo[x.key].subscriptionPeriod))) : null;
+        iysContent = config.iysContentFunc ? await config.iysContentFunc(
+            req.body.os,
+            purchase
+                .filter(x => keyInfo[x.key] && dateValidate(x.date, keyInfo[x.key].subscriptionPeriod)),
+            req.body
+        ) : null;
 
         deviceRepo.update(req.body.device, {
             iysContent,
