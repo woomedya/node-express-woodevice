@@ -23,7 +23,10 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), herokuIP.handler(
     // req.body.device, req.body.keys, req.body.os
     var device = await deviceRepo.findByDevice(req.body.device);
 
-    var iysContent = config.iysContentFunc ? await config.iysContentFunc(req.body.os, req.body.purchase, req.body) : null;
+    var iysContent = config.iysContentFunc ? await config.iysContentFunc({
+        body: req.body,
+        purchase: req.body.purchase,
+    }) : null;
 
     // bazı işletim sistemlerinden os gelmemesi durumu için kullanılır.
     if (!req.body.os && (device ? device.os == null : true)) {
