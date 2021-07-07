@@ -29,6 +29,12 @@ const device = new mongoose.Schema({
         default: () => {
             return [];
         }
+    },
+    ips: {
+        type: Object,
+        default: () => {
+            return {};
+        }
     }
 });
 

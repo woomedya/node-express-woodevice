@@ -1,6 +1,7 @@
 const returnModel = require('woo-utilities/returnModel');
 const AsyncRouter = require('express-async-router').AsyncRouter;
 const authToken = require('woo-utilities/authTokenHandler');
+const herokuIP = require('woo-utilities/herokuIPHandler');
 const token = require('../constants/token');
 const deviceRepo = require('../repositories/device');
 const config = require('../../config');
@@ -10,7 +11,7 @@ const router = AsyncRouter();
 
 var processDevices = {};
 
-router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) => {
+router.post('/insert', authToken.handler(token.DEVICE_INSERT), herokuIP(), async (req, res) => {
     if (processDevices[req.body.device]) {
         return res.send(returnModel({
             data: null
@@ -30,6 +31,11 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
     }
 
     if (device) {
+        var ips = device.ips || {};
+        if (req.ip) {
+            ips[req.ip] = (ips[req.ip] || 0) + 1;
+        }
+
         var purchase = (device.purchase || []).map(x => x);
 
         var keyInfo = config.keyInfoFunc ? await config.keyInfoFunc(req.body.os) : {};
@@ -51,19 +57,21 @@ router.post('/insert', authToken.handler(token.DEVICE_INSERT), async (req, res) 
             });
         }
 
-        iysContent = config.iysContentFunc ? await config.iysContentFunc(
-            req.body.os,
-            purchase
+        iysContent = config.iysContentFunc ? await config.iysContentFunc({
+            ips,
+            purchase: purchase
                 .filter(x => keyInfo[x.key] && dateValidate(x.date, keyInfo[x.key].subscriptionPeriod)),
-            req.body
-        ) : null;
+            body: req.body
+        }) : null;
 
         deviceRepo.update(req.body.device, {
+            ips,
             iysContent,
             purchase
         });
     } else {
         await deviceRepo.insert(req.body.device, {
+            ips,
             os: req.body.os,
             iysContent
         });
