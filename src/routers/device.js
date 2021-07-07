@@ -11,7 +11,7 @@ const router = AsyncRouter();
 
 var processDevices = {};
 
-router.post('/insert', authToken.handler(token.DEVICE_INSERT), herokuIP(), async (req, res) => {
+router.post('/insert', authToken.handler(token.DEVICE_INSERT), herokuIP.handler(), async (req, res) => {
     if (processDevices[req.body.device]) {
         return res.send(returnModel({
             data: null
